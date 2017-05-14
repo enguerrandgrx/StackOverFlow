@@ -2,7 +2,7 @@
     <link href="http://vjs.zencdn.net/5.17.0/video-js.css" rel="stylesheet">
     <script src="http://vjs.zencdn.net/5.17.0/video.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="fonct.js"></script>
+    <script type="text/javascript" src="fonctions.js"></script>
     <script type="text/javascript" src="fonction_stopWord.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script type='text/javascript' src='https://api.stackexchange.com/js/2.0/all.js'></script>
@@ -27,18 +27,7 @@
     <video id="my-video" class="video-js" controls preload="auto" width="640" height="264" data-setup="{}">
     <source src="uploads/3 - 1 - Lecture 2.1 - Tail Recursion (1232) - jwformat.mp4" type='video/mp4'></video>
 
-    
-    <!-- HELP LINKS -->
-    <!-- BUTTON -->
-    <!-- <button onclick="makeQuery()"> Query to StackOverflow</button> -->
-
-    <div id = "help">
-        <button dysplay = 'none' onclick="help()"> HELP</button>
-    </div>
-
-
     <script>
-        document.getElementById("help").style.display = "none";
         var player = videojs('my-video');
         var time = 0; //use to register the time when user paused the video
         var currentTime = 0; 
@@ -48,33 +37,33 @@
         var baseURL = 'http://stackoverflow.com/questions/'; //Use to acces stackoverflow with question id 
         var index = 0;          //Use to acess the array of timeHelp
         var configPause = 0; 
+        var configHelp = 0; 
         var timeDisplay = -11;
-        var arg = 'test'
+        var timeDisplayHelp = -11; 
+
 
         var titleHelp = 'Help'
-        var overlayHelp = '<button onclick="test()">'+titleHelp+'</button>'; 
+        var overlayHelp = '<button onclick="help()">'+titleHelp+'</button>'; 
 
 
         /**
         * If user click on help button pause video and display stackoverflow result
         */
-        function test(){
-            console.log("test"); 
-            player.pause();
-            mainCaller(); 
-            console.log("temps : ", player.currentTime())
-            console.log("Main Caller call by help"); 
-        }
-
-        
         function help(){
             player.pause();
             mainCaller(); 
-            console.log("Main Caller call by help"); 
+            console.log("temps : ", player.currentTime())
         }
 
  
         var overlay = [
+        {
+            title: titleHelp, 
+            content: overlayHelp,
+            start: timeDisplayHelp,
+            end:  timeDisplayHelp,
+            align: 'bottom-left',
+        },
         {   
             content: '', 
             title: '', 
@@ -109,17 +98,9 @@
             start: timeDisplay,
             end: timeDisplay,
             align: 'left5',
-        },{
-            title: titleHelp, 
-            content: overlayHelp,
-            start: 0,
-            end:  1000000,
-            align: 'bottom-left',
         }]; 
 
-        player.overlay({
-                   overlays: overlay,
-                });
+    
 
         var time = function(min, max, index) {
             this.min = min;
@@ -150,7 +131,6 @@
 				index++; 
 				player.pause();
                 mainCaller(); 
-                console.log("Main caller call by checkTime"); 
   				console.log("Time reached!");
 			}
 		}
@@ -162,20 +142,16 @@
         	time = player.currentTime();
             wantedVTT = CurrentContent(time, vtt, Time);
             var key_word = Find_Key_Word(wantedVTT);
-            console.log("ask_stackoverflow")
             ask_stackoverflow('q', 'scala+tail-recursion' + key_word);
-            //player.exitFullscreen(); 
         }
 
         player.on('pause', function() {
             time = player.currentTime();
-            console.log("PAUSEEEEEEEE : " + time);
+            console.log("pause : " + time);
             if (configPause){
                 mainCaller();
-                console.log("Main caller call by pause ");  
             } 
             seekedback = 1; 
-            console.log("temps d'execution : ", player.currentTime()-time)
         });
 
       
@@ -185,7 +161,6 @@
 
 
         player.on('seeked', function() {
-            console.log("SEEKEDDDDDD :::::")
             time = player.currentTime();
  			if (currentTime  < time ||  Math.abs(currentTime - time) < 2){
                 seekedback = 0; 
@@ -217,7 +192,6 @@
                     break;
                 default:
             }
-            console.log(url); 
             var res = fetch(url)
                 .then(function(response) {
                     if (response.ok) {
@@ -230,7 +204,7 @@
                     var id = item.question_id;
                     var title = item.title;
                     if (i < 5) {
-                        ChangeOverlay(i, baseURL + id, title);                             
+                        ChangeOverlay(i+1, baseURL + id, title);                             
                     }
                 }
                 player.currentTime(timeDisplay-0.001);

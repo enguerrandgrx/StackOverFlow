@@ -17,31 +17,6 @@ var key_words = new Array(
  ); 
 
 
-/**
- * open a window to make a query direct on stackoverflow
- *
- *
- */
-function queryStackOverflow(){
-    var url = "http://stackoverflow.com/search?q="; 
-    var data = ""; 
-    var query = ""; 
-    var tmp = new Array(); 
-    data = prompt("enter your query", "Example: scala function"); 
-    console.log(data); 
-    tmp = data.split(' ');
-    for(i = 0;i < Object.size(tmp);i++){
-        query = query+"+"+tmp[i]; 
-        if (stringInArray(key_words, tmp[i]) == -1){
-            key_words.push(tmp[i]);
-            console.log(key_words); 
-            console.log("add a word in key_word :", tmp[i]);  
-        }
-    }
-    query = query.substr(1); 
-    var win = window.open(url+query, '_blank');
-    win.focus();
-}
 
 /**
  * Takes a number and returns its square value
@@ -72,8 +47,6 @@ function ReadAsArray(file) {
 String.prototype.isEmpty = function() {
     return (this.length == 0 || !this.trim());
 }; 
-
-
 
 Object.size = function(obj) {
     var size = 0, key;
@@ -109,18 +82,7 @@ function ExtractTime(data){
     
 }
 
-/**
- * Takes a time (float) and returns its seconde value
- *
- * @param {number} num - time
- * @return {number}
- */
-function concatSeconde(CurrentTime){
-    console.log(CurrentTime); 
-    var tmp = CurrentTime.toString().split(".");
-    console.log(tmp); 
-    return tmp[0];
-}
+
 
 /**
  * Takes a vtt array and returns an array of string close to Currentime (call to Cleanwanted)
@@ -132,7 +94,7 @@ function concatSeconde(CurrentTime){
  */
 function CurrentContent(CurrentTime, VTTArray, TIMEArray ){
     var tmp = VTTArray.slice(); 
-    CurrentTime = concatSeconde(CurrentTime);
+    CurrentTime = Math.floor(CurrentTime);
     var time_min = CurrentTime - 5;
     var time_max = parseInt(CurrentTime) + 5;
     var index_min = FindTime(time_min, TIMEArray, 1);
@@ -189,19 +151,7 @@ function VTT_to_String_Array(data){
     return result; 
 }
 
-//not used
-function Made_URL(data){
-    console.log("ON PASSE ICI !!!!!!!!!!!"); 
-    var url = "http://stackoverflow.com/search?q="; 
-    url = url+"+"+language+"+"+title; 
-    Key = intersect(data, key_words);
-    console.log(Object.size(Key)); 
-    for(i = 0; i < Object.size(Key); i++){
-        console.log(Key[i]); 
-        url+="+"+Key[i]; 
-    }
-    return url; 
-}
+
 
 /**
  * Takes a string array and return string in key_words array
@@ -255,50 +205,6 @@ function FindTime(time, TIMEArray, passage) {
 }
 
 
-//not used 
-function Counter(VTTArray){
-	var result = new Array();
-	var double = new Array();
-	var tmp = new Array();
-	var size_res = 0; 
-	var size_tmp = 0; 
-	var line = 0; 
-    for(j = 0; j < Object.size(VTTArray); j++){
-		line = VTTArray[j]; 
-		if(line.match(/^\d+$/)){
-			console.log("enfin"); 
-		} else {
-			tmp = line.split('\n\r'); 
-			size_tmp = Object.size(tmp); 
-			size_res = Object.size(result); 
-			for (i = 0; i < size_tmp; i++){
-				for(k = 0; k < size_result; k++){
-					if (tmp[i] == result[k]){
-						double.push(tmp[i]); 
-					}
-					result.push(tmp[i]); 
-				}
-			}
-		}
-	}
-	console.log(double); 
-	return double; 
-}
-
-/**
- * change the href and text of html balise 
- *
- * @param {number} id of the balise 
- * @param {string} href of the balise
- * @param {stngri} text to print 
- */
-function ChangeURL(id, url, text){
-        document.getElementById(id).removeAttribute("href");
-        document.getElementById(id).setAttribute("href",url);
-        document.getElementById(id).innerHTML = text;
-}
-
-
 /**
  * compute the intersection of the array
  *
@@ -317,6 +223,75 @@ function intersect(a, b){
   }
   return result;
 }
+
+
+
+/*
+ *Set up the configuaration of the Helper
+ * 
+ */
+function diri(){
+            var choix = document.config.choice.selectedIndex;
+            switch (choix){
+            case 1:
+                //Configuration Help
+                //document.getElementById("help").style.display = "initial";
+                configPause = 0; 
+                configHelp = 1; 
+                if(interval =! null){
+                    clearInterval(interval); 
+                }
+                if (intervalCurrentTime =! null){
+                    clearInterval(intervalCurrentTime); 
+                }
+                break;
+            case 2:
+                //Configuration Pause
+                //document.getElementById("help").style.display = "none";
+                configPause = 1; 
+                configHelp = 0; 
+                if(interval =! null){
+                    clearInterval(interval); 
+                }
+                var intervalCurrentTime = setInterval(updateCurrentTime, 1000);
+                break;
+            case 3: 
+                //Configuration Time
+                //document.getElementById("help").style.display = "none";
+                configPause = 0; 
+                configHelp = 0; 
+                interval = setInterval(checkTime, 100);
+                if (intervalCurrentTime =! null){
+                    clearInterval(intervalCurrentTime); 
+                }
+                break;
+            default:
+                console.log("default"); 
+                configPause = 0; 
+                if(interval =! null){
+                    clearInterval(interval); 
+                }
+                if (intervalCurrentTime =! null){
+                    clearInterval(intervalCurrentTime); 
+                }
+                //document.getElementById("help").style.display = "none";
+                break;
+            }
+            if(configHelp == 1){
+                overlay[0]["start"] = 0; 
+                overlay[0]["end"] = player.duration(); 
+            } else {
+                overlay[0]["start"] = timeDisplayHelp; 
+                overlay[0]["end"] = timeDisplayHelp; 
+            }
+            player.currentTime(timeDisplay-0.001);
+                player.overlay({
+                   overlays: overlay,
+                });
+                player.currentTime(timeDisplay);
+            
+            console.log(choix, "config Pause = ", configPause); 
+        }
 
 
 
