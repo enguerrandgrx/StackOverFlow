@@ -45,6 +45,13 @@
         var titleHelp = 'Help'
         var overlayHelp = '<button onclick="help()">'+titleHelp+'</button>'; 
 
+        //Initialize Subtitle Key_words and time
+        //time where student have some difficulty
+        var timeHelp = ReadAsArray('time.vtt'); 
+        vtt = ReadAsArray('uploads/subtitles.vtt');
+        var key_words = ReadAsArray('key_words.vtt'); 
+        Time = ExtractTime(vtt);
+
 
         /**
         * If user click on help button pause video and display stackoverflow result
@@ -53,6 +60,11 @@
             player.pause();
             mainCaller(); 
             console.log("temps : ", player.currentTime())
+        }
+
+        function display(index){
+        	url = overlay[index]['title']
+        	var win = window.open(url, '_blank');
         }
 
  
@@ -113,14 +125,6 @@
         }
 
         
-        //Exemple of time where student have some difficulty
-        var timeHelp = new Array(4.0, 15.0, 30.00);
-
-        //Initialized subtitles and times array
-        vtt = ReadAsArray('uploads/subtitles.vtt');
-        Time = ExtractTime(vtt);
-
-        
         /**
         * Check if curruent time is equal to the element of timeHelp at index if equal pause and display stackoverflow result
         *
@@ -174,10 +178,12 @@
         });
 
         function ChangeOverlay(index, url, title){
-            overlay[index]["title"] = title; 
+            overlay[index]["title"] = url; 
             overlay[index]["start"] = 0; 
             overlay[index]["end"] = timeDisplay + 3; 
-            overlay[index]["content"] = '<a href='+url+'>'+title+'</a>'; 
+            //overlay[index]["content"] = '<a href='+url+'>'+title+'</a>'; 
+            var win = '<button onclick="display('+index+')">'+title+'</button>'
+            overlay[index]["content"] = win; 
         }
 
         function ask_stackoverflow(type = 'q', query = '', tag = '', body = '') {

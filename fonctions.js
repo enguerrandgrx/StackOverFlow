@@ -2,7 +2,7 @@ var language = "scala";
 var title = "tail-recursion";
 var url = "http://stackoverflow.com/search?q="; 
 
-var key_words = new Array(
+/*var key_words = new Array(
  'functions',
  'recursion', 
  'arguments', 
@@ -14,7 +14,8 @@ var key_words = new Array(
  'factorial',
  'recursive',
  'stack'
- ); 
+ ); */
+
 
 
 
