@@ -1,29 +1,8 @@
-var language = "scala";
-var title = "tail-recursion";
-var url = "http://stackoverflow.com/search?q="; 
-
-/*var key_words = new Array(
- 'functions',
- 'recursion', 
- 'arguments', 
- 'substitution',
- 'algorythm', 
- 'GCD', 
- 'modular',
- 'reduction',
- 'factorial',
- 'recursive',
- 'stack'
- ); */
-
-
-
-
 /**
- * Takes a number and returns its square value
+ * Take a vtt file and return a array of the content line by line 
  *
- * @param {number} num - The number for squaring
- * @return {number}
+ * @param {file} - the path the to file
+ * @return {array}
  */
 function ReadAsArray(file) {
     var result = null;
@@ -44,6 +23,30 @@ function ReadAsArray(file) {
     });
     return result;
 }
+
+/**
+ * Take a time and a activity to log on the server and send it to send.php
+ *
+ * @param {file} - the path the to file
+ * @return {array}
+ */
+ function SendActivity(time, activity){
+            $.ajax({
+                url: 'send.php', 
+                type: 'post',
+                data: 'time = ' + time + ' &activity = ' + activity, 
+                dataType: 'html', 
+                processData: false,
+                success: function( data, textStatus, jQxhr ){
+                    console.log('success');
+                },
+                error: function( jqXhr, textStatus, errorThrown ){
+                    console.log( errorThrown );
+                }
+            })
+            console.log("data send ? ")
+}
+
 
 String.prototype.isEmpty = function() {
     return (this.length == 0 || !this.trim());
@@ -285,6 +288,11 @@ function diri(){
                 overlay[0]["start"] = timeDisplayHelp; 
                 overlay[0]["end"] = timeDisplayHelp; 
             }
+            for(i = 1; i < 5;  i++){
+                overlay[i]["content"] = "";
+                overlay[i]["title"] = "";
+                overlay[i]["end"] = 0; 
+            }
             player.currentTime(timeDisplay-0.001);
                 player.overlay({
                    overlays: overlay,
@@ -294,6 +302,22 @@ function diri(){
             console.log(choix, "config Pause = ", configPause); 
         }
 
+
+function ChangeOverlay(index, url, title){
+            overlay[index]["title"] = url; 
+            overlay[index]["start"] = 0; 
+            overlay[index]["end"] = timeDisplay + 3; 
+            //overlay[index]["content"] = '<a href='+url+'>'+title+'</a>'; 
+            var win = '<button onclick="display('+index+')">'+title+'</button>'
+            overlay[index]["content"] = win; 
+        }
+
+
+ function display(index){
+            url = overlay[index]['title']
+            var win = window.open(url, '_blank');
+            SendActivity(player.currentTime(), 'Display URL : ' + url)
+        }
 
 
 

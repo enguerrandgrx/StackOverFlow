@@ -8,9 +8,11 @@
     <script type='text/javascript' src='https://api.stackexchange.com/js/2.0/all.js'></script>
     <script src="//players.brightcove.net/videojs-overlay/1/videojs-overlay.min.js"></script>
 
+
 </head>
 
 <body>
+    
     
     <!-- Configuration -->
     <br />
@@ -45,13 +47,36 @@
         var titleHelp = 'Help'
         var overlayHelp = '<button onclick="help()">'+titleHelp+'</button>'; 
 
+
+        var overlay = [{
+            title: titleHelp, content: overlayHelp,start: timeDisplayHelp,end:  timeDisplayHelp,align: 'bottom-left',
+        },{   
+            title: '', content: '', start: 0,end:  timeDisplay,align: 'left',
+        },{   
+            title: '', content: '', start: 0, end: timeDisplay,align: 'left2',
+        },{   
+            title: '',  content: '', start: timeDisplay,end: timeDisplay,align: 'left3',
+        },{
+            title: '', content: '', start: timeDisplay,end: timeDisplay,align: 'left4',
+        },{
+            title: '', content: '', start: timeDisplay,end: timeDisplay,align: 'left5',
+        }]; 
+
+
+       var time = function(min, max, index) {
+            this.min = min;
+            this.max = max;
+            this.index = index;
+        }
+
+
         //Initialize Subtitle Key_words and time
         //time where student have some difficulty
         var timeHelp = ReadAsArray('time.vtt'); 
         vtt = ReadAsArray('uploads/subtitles.vtt');
         var key_words = ReadAsArray('key_words.vtt'); 
         Time = ExtractTime(vtt);
-
+        //--- FUNCTION USING PLAYER VARIABLE---//
 
         /**
         * If user click on help button pause video and display stackoverflow result
@@ -60,64 +85,7 @@
             player.pause();
             mainCaller(); 
             console.log("temps : ", player.currentTime())
-        }
-
-        function display(index){
-        	url = overlay[index]['title']
-        	var win = window.open(url, '_blank');
-        }
-
- 
-        var overlay = [
-        {
-            title: titleHelp, 
-            content: overlayHelp,
-            start: timeDisplayHelp,
-            end:  timeDisplayHelp,
-            align: 'bottom-left',
-        },
-        {   
-            content: '', 
-            title: '', 
-            start: 0,
-            end:  timeDisplay,
-            align: 'left',
-        }, 
-        {   
-            title: '', 
-            content: '', 
-            start: 0,
-            end: timeDisplay,
-            align: 'left2',
-        }, 
-        {   
-            title: '',  
-            content: '', 
-            start: timeDisplay,
-            end: timeDisplay,
-            align: 'left3',
-        }, 
-        {
-            title: '', 
-            content: '', 
-            start: timeDisplay,
-            end: timeDisplay,
-            align: 'left4',
-        }, 
-        {
-            title: '', 
-            content: '', 
-            start: timeDisplay,
-            end: timeDisplay,
-            align: 'left5',
-        }]; 
-
-    
-
-        var time = function(min, max, index) {
-            this.min = min;
-            this.max = max;
-            this.index = index;
+            SendActivity(player.currentTime(), 'Help press')
         }
 
         function updateCurrentTime(){
@@ -130,7 +98,6 @@
         *
         */
 		function checkTime(){
-            //console.log("test"); 
 			if(Math.floor(player.currentTime()) == timeHelp[index]){
 				index++; 
 				player.pause();
@@ -138,7 +105,8 @@
   				console.log("Time reached!");
 			}
 		}
-        
+
+       
         /**
         * Update time wantedVTT and keyword to make a query on stackoverflow
         */
@@ -177,14 +145,7 @@
             console.log("seeked " + time);
         });
 
-        function ChangeOverlay(index, url, title){
-            overlay[index]["title"] = url; 
-            overlay[index]["start"] = 0; 
-            overlay[index]["end"] = timeDisplay + 3; 
-            //overlay[index]["content"] = '<a href='+url+'>'+title+'</a>'; 
-            var win = '<button onclick="display('+index+')">'+title+'</button>'
-            overlay[index]["content"] = win; 
-        }
+        
 
         function ask_stackoverflow(type = 'q', query = '', tag = '', body = '') {
             var url = 'https://api.stackexchange.com/2.2/search/'; 
