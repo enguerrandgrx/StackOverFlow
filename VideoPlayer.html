@@ -27,7 +27,7 @@
 
     <!-- VIDEO PLAYER -->
     <video id="my-video" class="video-js" controls preload="auto" width="640" height="264" data-setup="{}">
-    <source src="uploads/3 - 1 - Lecture 2.1 - Tail Recursion (1232) - jwformat.mp4" type='video/mp4'></video>
+    <source src="uploads/lecture2.1.mp4" type='video/mp4'></video>
 
     <script>
         var player = videojs('my-video');
@@ -42,8 +42,6 @@
         var configHelp = 0; 
         var timeDisplay = -11;
         var timeDisplayHelp = -11; 
-
-
         var titleHelp = 'Help'
         var overlayHelp = '<button onclick="help()">'+titleHelp+'</button>'; 
 
@@ -68,16 +66,24 @@
             this.max = max;
             this.index = index;
         }
+        
 
+        $.getJSON('//freegeoip.net/json/?callback=?', function(data) {
+            var ip = data["ip"]; 
+            var country = data["country_name"]; 
+            var city = data["city"]; 
+            SendActivity('0', ip +';'+country+';'+city); 
+        });
 
-        //Initialize Subtitle Key_words and time
-        //time where student have some difficulty
+        //--- INITIALIZE TIMEHELP, VTT (SUBTITLE ARRAY) AND TIME ARRAY---//
         var timeHelp = ReadAsArray('time.vtt'); 
         vtt = ReadAsArray('uploads/subtitles.vtt');
         var key_words = ReadAsArray('key_words.vtt'); 
         Time = ExtractTime(vtt);
-        //--- FUNCTION USING PLAYER VARIABLE---//
+        
 
+        //--- FUNCTION USING PLAYER VARIABLE---//
+        
         /**
         * If user click on help button pause video and display stackoverflow result
         */
@@ -85,14 +91,13 @@
             player.pause();
             mainCaller(); 
             console.log("temps : ", player.currentTime())
-            SendActivity(player.currentTime(), 'Help press')
+            SendActivity('9', player.currentTime()); 
         }
 
         function updateCurrentTime(){
         	currentTime = player.currentTime(); 
         }
 
-        
         /**
         * Check if curruent time is equal to the element of timeHelp at index if equal pause and display stackoverflow result
         *
@@ -118,6 +123,7 @@
         }
 
         player.on('pause', function() {
+            SendActivity('2', player.currentTime()); 
             time = player.currentTime();
             console.log("pause : " + time);
             if (configPause){
@@ -128,6 +134,7 @@
 
       
         player.on('play', function() {
+            SendActivity('1', player.currentTime()); 
             console.log("play " + player.currentTime());
         });
 
@@ -137,7 +144,9 @@
  			if (currentTime  < time ||  Math.abs(currentTime - time) < 2){
                 seekedback = 0; 
  				console.log("seekback NO", currentTime - time); 
+                //SendActivity(player.currentTime(), '4'); 
             } else {
+                SendActivity('3', player.currentTime()); 
  				seekedback = 1; 
                 mainCaller(); 
  				console.log("seekback YES"); 
@@ -146,7 +155,10 @@
         });
 
         
-
+        /**
+        * This function call the stackexchange API and return the matching id of answers and display it as Overlay
+        *
+        */
         function ask_stackoverflow(type = 'q', query = '', tag = '', body = '') {
             var url = 'https://api.stackexchange.com/2.2/search/'; 
             timeDisplay = player.currentTime(); 

@@ -30,13 +30,12 @@ function ReadAsArray(file) {
  * @param {file} - the path the to file
  * @return {array}
  */
- function SendActivity(time, activity){
+ function SendActivity(activity,data){
+    var full_data = activity + ";" + data + "\n"
             $.ajax({
                 url: 'send.php', 
                 type: 'post',
-                data: 'time = ' + time + ' &activity = ' + activity, 
-                dataType: 'html', 
-                processData: false,
+                data: {'data': full_data}, 
                 success: function( data, textStatus, jQxhr ){
                     console.log('success');
                 },
@@ -44,7 +43,6 @@ function ReadAsArray(file) {
                     console.log( errorThrown );
                 }
             })
-            console.log("data send ? ")
 }
 
 
@@ -231,7 +229,7 @@ function intersect(a, b){
 
 
 /*
- *Set up the configuaration of the Helper
+ *Set up the configuaration of the Helper - And log the activity 
  * 
  */
 function diri(){
@@ -281,6 +279,7 @@ function diri(){
                 //document.getElementById("help").style.display = "none";
                 break;
             }
+            SendActivity(choix + 5, player.currentTime()); // 5 is an offset for the db 
             if(configHelp == 1){
                 overlay[0]["start"] = 0; 
                 overlay[0]["end"] = player.duration(); 
@@ -307,16 +306,20 @@ function ChangeOverlay(index, url, title){
             overlay[index]["title"] = url; 
             overlay[index]["start"] = 0; 
             overlay[index]["end"] = timeDisplay + 3; 
-            //overlay[index]["content"] = '<a href='+url+'>'+title+'</a>'; 
             var win = '<button onclick="display('+index+')">'+title+'</button>'
             overlay[index]["content"] = win; 
         }
 
-
+/**
+ * This function open url in new tab - and call SendActivity() to log activity 
+ *
+ * @param {index} the index of the overlay
+ */
  function display(index){
             url = overlay[index]['title']
             var win = window.open(url, '_blank');
-            SendActivity(player.currentTime(), 'Display URL : ' + url)
+            url = url.replace("http://stackoverflow.com/questions/", ''); 
+            SendActivity('10', player.currentTime()+';'+url); 
         }
 
 
