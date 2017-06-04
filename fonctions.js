@@ -279,7 +279,7 @@ function diri(){
                 //document.getElementById("help").style.display = "none";
                 break;
             }
-            SendActivity(choix + 5, player.currentTime()); // 5 is an offset for the db 
+            SendActivity(choix + 4, player.currentTime()); // 5 is an offset for the db 
             if(configHelp == 1){
                 overlay[0]["start"] = 0; 
                 overlay[0]["end"] = player.duration(); 
@@ -319,7 +319,7 @@ function ChangeOverlay(index, url, title){
             url = overlay[index]['title']
             var win = window.open(url, '_blank');
             url = url.replace("http://stackoverflow.com/questions/", ''); 
-            SendActivity('10', player.currentTime()+';'+url); 
+            SendActivity('8', player.currentTime()+';'+url); 
         }
 
 
