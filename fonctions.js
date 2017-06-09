@@ -97,8 +97,8 @@ function ExtractTime(data){
 function CurrentContent(CurrentTime, VTTArray, TIMEArray ){
     var tmp = VTTArray.slice(); 
     CurrentTime = Math.floor(CurrentTime);
-    var time_min = CurrentTime - 5;
-    var time_max = parseInt(CurrentTime) + 5;
+    var time_min = CurrentTime - 10;
+    var time_max = parseInt(CurrentTime) + 10;
     var index_min = FindTime(time_min, TIMEArray, 1);
     var index_max = FindTime(time_max, TIMEArray, 2);
     tmp = tmp.slice(index_min, index_max);

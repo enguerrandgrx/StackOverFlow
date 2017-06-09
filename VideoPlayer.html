@@ -4,7 +4,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="fonctions.js"></script>
     <script type="text/javascript" src="fonction_stopWord.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript" src="fingerprint.js"></script>
+    <link rel="stylesheet" type="text/css" href="Style/style.css">
     <script type='text/javascript' src='https://api.stackexchange.com/js/2.0/all.js'></script>
     <script src="//players.brightcove.net/videojs-overlay/1/videojs-overlay.min.js"></script>
 
@@ -67,18 +68,18 @@
             this.index = index;
         }
         
-
+        // Identify the USER
+        var fingerprint = new Fingerprint().get();
         $.getJSON('//freegeoip.net/json/?callback=?', function(data) {
-            var ip = data["ip"]; 
             var country = data["country_name"]; 
             var city = data["city"]; 
-            SendActivity('0', ip +';'+country+';'+city); 
+            SendActivity('0', fingerprint +';'+country+';'+city); 
         });
 
         //--- INITIALIZE TIMEHELP, VTT (SUBTITLE ARRAY) AND TIME ARRAY---//
-        var timeHelp = ReadAsArray('time.vtt'); 
+        var timeHelp = ReadAsArray('uploads/time.vtt'); 
         vtt = ReadAsArray('uploads/subtitles.vtt');
-        var key_words = ReadAsArray('key_words.vtt'); 
+        var key_words = ReadAsArray('uploads/key_words.vtt'); 
         Time = ExtractTime(vtt);
         
 
